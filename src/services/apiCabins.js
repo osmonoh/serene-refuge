@@ -46,19 +46,22 @@ export const createEditCabin = async (newCabin, id) => {
         throw new Error("Cabin couldn't be created");
     }
 
-    // 2. Upload image
-    // only if there was no error in creating the cabin above
-    const { error: storageError } = await supabase.storage
-        .from("cabin-images")
-        .upload(imageName, newCabin.image);
+    // this if (!hasImagePath) added for editing cabin in case we are not changing an already uploaded image
+    if (!hasImagePath) {
+        // 2. Upload image
+        // only if there was no error in creating the cabin above
+        const { error: storageError } = await supabase.storage
+            .from("cabin-images")
+            .upload(imageName, newCabin.image);
 
-    // 3. Delete the cabin IF there was na error uploading the corresponding image
-    if (storageError) {
-        await supabase.from("cabins").delete().eq("id", data.id);
-        console.error(storageError);
-        throw new Error(
-            "Cabin image couldn't be uploaded and the cabin was't created"
-        );
+        // 3. Delete the cabin IF there was na error uploading the corresponding image
+        if (storageError) {
+            await supabase.from("cabins").delete().eq("id", data.id);
+            console.error(storageError);
+            throw new Error(
+                "Cabin image couldn't be uploaded and the cabin was't created"
+            );
+        }
     }
 
     return data;

@@ -1,7 +1,11 @@
 import { useState } from "react";
 import styled from "styled-components";
+
+import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
+
 import { formatCurrency } from "../../utils/helpers";
 import { useDeleteCabin } from "./useDeleteCabin";
+import { useCreateCabin } from "./useCreateCabin";
 import CreateCabinForm from "./CreateCabinForm";
 
 const TableRow = styled.div`
@@ -50,12 +54,28 @@ const CabinRow = ({ cabin }) => {
         maxCapacity,
         regularPrice,
         discount,
+        description,
         image
     } = cabin;
 
     const [showForm, setShowForm] = useState(false);
-
     const { isPending: isDeleting, mutate: deleteCabin } = useDeleteCabin();
+    const { isPending: isCreating, mutate: createCabin } = useCreateCabin();
+
+    const handleDelete = () => {
+        deleteCabin(cabinId);
+    };
+
+    const handleDuplicate = () => {
+        createCabin({
+            name: `Copy of ${name}`,
+            maxCapacity,
+            regularPrice,
+            discount,
+            description,
+            image
+        });
+    };
 
     return (
         <>
@@ -70,17 +90,16 @@ const CabinRow = ({ cabin }) => {
                     <span>&mdash;</span>
                 )}
                 <div>
-                    <button
-                        onClick={() => setShowForm((showForm) => !showForm)}
-                        disabled={isDeleting}
-                    >
-                        Edit
+                    <button onClick={handleDuplicate} disabled={isCreating}>
+                        <HiSquare2Stack />
                     </button>
                     <button
-                        onClick={() => deleteCabin(cabinId)}
-                        disabled={isDeleting}
+                        onClick={() => setShowForm((showForm) => !showForm)}
                     >
-                        Delete
+                        <HiPencil />
+                    </button>
+                    <button onClick={handleDelete} disabled={isDeleting}>
+                        <HiTrash />
                     </button>
                 </div>
             </TableRow>
