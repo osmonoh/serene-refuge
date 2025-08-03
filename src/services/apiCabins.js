@@ -11,20 +11,36 @@ export const getCabins = async () => {
     return data;
 };
 
-export const createCabin = async (newCabin) => {
+export const createEditCabin = async (newCabin, id) => {
+    // to check if by editing there is a new image being uploaded or an existing one being used (for existing there is just the supabase path, for a new one there is the actual image that needs to be uploaded)
+    const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
+    console.log(newCabin, id, hasImagePath);
+
     // Math.random() just to ensure that it has a unique name, replace() because supabase creates folders if the name contains any slashes '/'
     const imageName = `${Math.random()}-${newCabin.image.name}`.replace(
         "/",
         ""
     );
 
-    const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
+    const imagePath = hasImagePath
+        ? newCabin.image
+        : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
-    // 1. Create a cabin
-    const { data, error } = await supabase
-        .from("cabins")
-        .insert([{ ...newCabin, image: imagePath }])
-        .select();
+    // 1. Create/edit a cabin
+
+    let query = supabase.from("cabins");
+
+    // A) CREATE
+    if (!id) {
+        query = query.insert([{ ...newCabin, image: imagePath }]);
+    }
+
+    // B) EDIT
+    if (id) {
+        query = query.update({ ...newCabin, image: imagePath }).eq("id", id);
+    }
+
+    const { data, error } = await query.select().single(); // adding single() will save only the cabin object into data const and not the array - that's what we return from the function
 
     if (error) {
         console.error(error);
