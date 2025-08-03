@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 import styled from "styled-components";
 import { formatCurrency } from "../../utils/helpers";
-import { deleteCabin } from "../../services/apiCabins";
+import { useDeleteCabin } from "./useDeleteCabin";
 import CreateCabinForm from "./CreateCabinForm";
 
 const TableRow = styled.div`
@@ -57,20 +55,7 @@ const CabinRow = ({ cabin }) => {
 
     const [showForm, setShowForm] = useState(false);
 
-    // useQueryClient hook gives us acces to queryClient and we can use it in useMutation: onSucces to invalidate data after mutation and that refetches the new (mutated) data
-    const queryClient = useQueryClient();
-
-    const { isPending: isDeleting, mutate } = useMutation({
-        mutationFn: deleteCabin,
-        onSuccess: () => {
-            toast.success("Cabin successfully deleted");
-
-            queryClient.invalidateQueries({
-                queryKey: ["cabins"]
-            });
-        },
-        onError: (err) => toast.error(err.message)
-    });
+    const { isPending: isDeleting, mutate: deleteCabin } = useDeleteCabin();
 
     return (
         <>
@@ -92,7 +77,7 @@ const CabinRow = ({ cabin }) => {
                         Edit
                     </button>
                     <button
-                        onClick={() => mutate(cabinId)}
+                        onClick={() => deleteCabin(cabinId)}
                         disabled={isDeleting}
                     >
                         Delete

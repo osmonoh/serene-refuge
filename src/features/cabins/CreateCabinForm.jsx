@@ -1,8 +1,6 @@
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-
-import { createEditCabin } from "../../services/apiCabins";
+import { useCreateCabin } from "./useCreateCabin";
+import { useEditCabin } from "./useEditCabin";
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
@@ -10,6 +8,7 @@ import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
 
+// this form is used for creating and also editing cabin
 function CreateCabinForm({ cabinToEdit = {} }) {
     const { id: editId, ...editValues } = cabinToEdit;
     const isEditSession = Boolean(editId);
@@ -21,36 +20,8 @@ function CreateCabinForm({ cabinToEdit = {} }) {
     });
     const { errors } = formState;
 
-    // useQueryClient hook gives us acces to queryClient and we can use it in useMutation: onSucces to invalidate data after mutation and that refetches the new (mutated) data
-    const queryClient = useQueryClient();
-
-    const { isPending: isCreating, mutate: createCabin } = useMutation({
-        mutationFn: createEditCabin,
-        onSuccess: () => {
-            toast.success("New cabin successfully created");
-
-            queryClient.invalidateQueries({
-                queryKey: ["cabins"]
-            });
-
-            reset();
-        },
-        onError: (err) => toast.error(err.message)
-    });
-
-    const { isPending: isEditing, mutate: editCabin } = useMutation({
-        mutationFn: ({ newCabinData, id }) => createEditCabin(newCabinData, id), // mutationFn can accept only one parameter so as a workaround passing in an object and destructuring
-        onSuccess: () => {
-            toast.success("Cabin successfully edited");
-
-            queryClient.invalidateQueries({
-                queryKey: ["cabins"]
-            });
-
-            reset();
-        },
-        onError: (err) => toast.error(err.message)
-    });
+    const { isPending: isCreating, mutate: createCabin } = useCreateCabin();
+    const { isPending: isEditing, mutate: editCabin } = useEditCabin();
 
     const isWorking = isCreating || isEditing;
 
@@ -59,9 +30,25 @@ function CreateCabinForm({ cabinToEdit = {} }) {
             typeof data.image === "string" ? data.image : data.image[0];
 
         if (isEditSession) {
-            editCabin({ newCabinData: { ...data, image }, id: editId });
+            editCabin(
+                { newCabinData: { ...data, image }, id: editId },
+                {
+                    onSuccess: (dataFromMutationFn) => {
+                        console.log(dataFromMutationFn);
+                        reset();
+                    }
+                } // we can use an options object as a second argument (we also get access to the data returned from mutationFn - createEditCabin - here just console log for illustration) - here onSuccess we call reset() to clear the form (as now we cannot directly use it in useMutation since we moved it to the custom hook useEditCabin)
+            );
         } else {
-            createCabin({ ...data, image });
+            createCabin(
+                { ...data, image },
+                {
+                    onSuccess: (dataFromMutationFn) => {
+                        console.log(dataFromMutationFn);
+                        reset();
+                    }
+                } // we can use an options object as a second argument (we also get access to the data returned from mutationFn - createEditCabin - here just console log for illustration) - here onSuccess we call reset() to clear the form (as now we cannot directly use it in useMutation since we moved it to the custom hook useCreateCabin)
+            );
         }
     };
 
