@@ -1,3 +1,4 @@
+import { useForm } from "react-hook-form";
 import { useSettings } from "./useSettings";
 import { useUpdateSetting } from "./useUpdateSetting";
 import Form from "../../ui/Form";
@@ -6,19 +7,19 @@ import Input from "../../ui/Input";
 import Spinner from "../../ui/Spinner";
 
 const UpdateSettingsForm = () => {
-    const {
-        isLoading,
-        error,
-        settings: {
-            maxBookingLength,
-            minBookingLength,
-            maxGuestsPerBooking,
-            breakfastPrice
-        } = {}
-    } = useSettings();
+    const { isLoading, error, settings } = useSettings();
 
     const { isPending: isUpdating, mutate: updateSetting } = useUpdateSetting();
 
+    // Initialize react-hook-form with settings as defaultValues
+    // This will automatically update the form when settings change
+    const { register } = useForm({
+        defaultValues: settings,
+        // This ensures the form updates when settings change
+        values: settings
+    });
+
+    // Handle individual field updates
     const handleUpdate = (e, fieldName) => {
         const { value } = e.target;
 
@@ -35,8 +36,8 @@ const UpdateSettingsForm = () => {
                 <Input
                     type="number"
                     id="min-nights"
-                    defaultValue={minBookingLength}
                     disabled={isUpdating}
+                    {...register("minBookingLength")}
                     onBlur={(e) => handleUpdate(e, "minBookingLength")}
                 />
             </FormRow>
@@ -45,8 +46,8 @@ const UpdateSettingsForm = () => {
                 <Input
                     type="number"
                     id="max-nights"
-                    defaultValue={maxBookingLength}
                     disabled={isUpdating}
+                    {...register("maxBookingLength")}
                     onBlur={(e) => handleUpdate(e, "maxBookingLength")}
                 />
             </FormRow>
@@ -55,8 +56,8 @@ const UpdateSettingsForm = () => {
                 <Input
                     type="number"
                     id="max-guests"
-                    defaultValue={maxGuestsPerBooking}
                     disabled={isUpdating}
+                    {...register("maxGuestsPerBooking")}
                     onBlur={(e) => handleUpdate(e, "maxGuestsPerBooking")}
                 />
             </FormRow>
@@ -65,8 +66,8 @@ const UpdateSettingsForm = () => {
                 <Input
                     type="number"
                     id="breakfast-price"
-                    defaultValue={breakfastPrice}
                     disabled={isUpdating}
+                    {...register("breakfastPrice")}
                     onBlur={(e) => handleUpdate(e, "breakfastPrice")}
                 />
             </FormRow>
