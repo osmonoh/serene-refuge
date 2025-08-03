@@ -11,6 +11,7 @@ import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
 
 function CreateCabinForm() {
+    // no need to make the inputs controlled we use useForm from "react-hook-form"
     const { register, handleSubmit, reset, getValues, formState } = useForm();
     const { errors } = formState;
 
@@ -32,7 +33,7 @@ function CreateCabinForm() {
     });
 
     const onSubmit = (data) => {
-        mutate(data);
+        mutate({ ...data, image: data.image[0] });
     };
 
     const onError = (errors) => {
@@ -120,8 +121,15 @@ function CreateCabinForm() {
                 />
             </FormRow>
 
-            <FormRow label="Cabin photo" error={errors?.image?.message}>
-                <FileInput id="image" accept="image/*" />
+            <FormRow label="Cabin photo">
+                <FileInput
+                    id="image"
+                    accept="image/*"
+                    // type="file" // we can set this in the component file (FileInput) with attrs() property on styled
+                    {...register("image", {
+                        required: "This field is required"
+                    })}
+                />
             </FormRow>
 
             <FormRow>
