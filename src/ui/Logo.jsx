@@ -24,7 +24,7 @@ const Text = styled.p`
     text-transform: uppercase;
 `;
 
-function Logo() {
+const Logo = () => {
     return (
         <StyledLogo>
             <Img src="/logo-light.png" alt="Logo" />
@@ -32,6 +32,6 @@ function Logo() {
             {/* <Text>Serene refuge</Text> */}
         </StyledLogo>
     );
-}
+};
 
 export default Logo;

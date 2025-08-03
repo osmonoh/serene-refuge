@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useCreateCabin } from "./useCreateCabin";
-import { useEditCabin } from "./useEditCabin";
+import { useUpdateCabin } from "./useUpdateCabin";
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
@@ -8,36 +8,36 @@ import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
 
-// this form is used for creating and also editing cabin
-function CreateCabinForm({ cabinToEdit = {} }) {
-    const { id: editId, ...editValues } = cabinToEdit;
-    const isEditSession = Boolean(editId);
+// this form is used for creating and also updating cabin
+const CreateUpdateCabinForm = ({ cabinToUpdate = {} }) => {
+    const { id: updateId, ...updateValues } = cabinToUpdate;
+    const isUpdateSession = Boolean(updateId);
 
     // no need to make the inputs controlled we use useForm from "react-hook-form" (register)
-    // to pass values into inputs we can add an options object to useForm (in this case we want to pass defaultValues only if we are editing not creating cabin)
+    // to pass values into inputs we can add an options object to useForm (in this case we want to pass defaultValues only if we are updating not creating cabin)
     const { register, handleSubmit, reset, getValues, formState } = useForm({
-        defaultValues: isEditSession ? editValues : {}
+        defaultValues: isUpdateSession ? updateValues : {}
     });
     const { errors } = formState;
 
     const { isPending: isCreating, mutate: createCabin } = useCreateCabin();
-    const { isPending: isEditing, mutate: editCabin } = useEditCabin();
+    const { isPending: isUpdating, mutate: updateCabin } = useUpdateCabin();
 
-    const isWorking = isCreating || isEditing;
+    const isWorking = isCreating || isUpdating;
 
     const onSubmit = (data) => {
         const image =
             typeof data.image === "string" ? data.image : data.image[0];
 
-        if (isEditSession) {
-            editCabin(
-                { newCabinData: { ...data, image }, id: editId },
+        if (isUpdateSession) {
+            updateCabin(
+                { newCabinData: { ...data, image }, id: updateId },
                 {
                     onSuccess: (dataFromMutationFn) => {
                         console.log(dataFromMutationFn);
                         reset();
                     }
-                } // we can use an options object as a second argument (we also get access to the data returned from mutationFn - createEditCabin - here just console log for illustration) - here onSuccess we call reset() to clear the form (as now we cannot directly use it in useMutation since we moved it to the custom hook useEditCabin)
+                } // we can use an options object as a second argument (we also get access to the data returned from mutationFn - createUpdateCabin - here just console log for illustration) - here onSuccess we call reset() to clear the form (as now we cannot directly use it in useMutation since we moved it to the custom hook useUpdateCabin)
             );
         } else {
             createCabin(
@@ -47,7 +47,7 @@ function CreateCabinForm({ cabinToEdit = {} }) {
                         console.log(dataFromMutationFn);
                         reset();
                     }
-                } // we can use an options object as a second argument (we also get access to the data returned from mutationFn - createEditCabin - here just console log for illustration) - here onSuccess we call reset() to clear the form (as now we cannot directly use it in useMutation since we moved it to the custom hook useCreateCabin)
+                } // we can use an options object as a second argument (we also get access to the data returned from mutationFn - createUpdateCabin - here just console log for illustration) - here onSuccess we call reset() to clear the form (as now we cannot directly use it in useMutation since we moved it to the custom hook useCreateCabin)
             );
         }
     };
@@ -143,7 +143,7 @@ function CreateCabinForm({ cabinToEdit = {} }) {
                     accept="image/*"
                     // type="file" // we can set this in the component file (FileInput) with attrs() property on styled
                     {...register("image", {
-                        required: isEditSession
+                        required: isUpdateSession
                             ? false
                             : "This field is required"
                     })}
@@ -156,11 +156,11 @@ function CreateCabinForm({ cabinToEdit = {} }) {
                     Cancel
                 </Button>
                 <Button disabled={isWorking}>
-                    {isEditSession ? "Edit cabin" : "Create new cabin"}
+                    {isUpdateSession ? "Update cabin" : "Create new cabin"}
                 </Button>
             </FormRow>
         </Form>
     );
-}
+};
 
-export default CreateCabinForm;
+export default CreateUpdateCabinForm;

@@ -5,7 +5,7 @@ import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 import Spinner from "../../ui/Spinner";
 
-function UpdateSettingsForm() {
+const UpdateSettingsForm = () => {
     const {
         isLoading,
         error,
@@ -72,6 +72,6 @@ function UpdateSettingsForm() {
             </FormRow>
         </Form>
     );
-}
+};
 
 export default UpdateSettingsForm;

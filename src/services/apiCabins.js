@@ -11,8 +11,8 @@ export const getCabins = async () => {
     return data;
 };
 
-export const createEditCabin = async (newCabin, id) => {
-    // to check if by editing there is a new image being uploaded or an existing one being used (for existing there is just the supabase path, for a new one there is the actual image that needs to be uploaded)
+export const createUpdateCabin = async (newCabin, id) => {
+    // to check if by updating there is a new image being uploaded or an existing one being used (for existing there is just the supabase path, for a new one there is the actual image that needs to be uploaded)
     const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
 
     // Math.random() just to ensure that it has a unique name, replace() because supabase creates folders if the name contains any slashes '/'
@@ -25,7 +25,7 @@ export const createEditCabin = async (newCabin, id) => {
         ? newCabin.image
         : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
-    // 1. Create/edit a cabin
+    // 1. Create/update a cabin
 
     let query = supabase.from("cabins");
 
@@ -34,7 +34,7 @@ export const createEditCabin = async (newCabin, id) => {
         query = query.insert([{ ...newCabin, image: imagePath }]);
     }
 
-    // B) EDIT
+    // B) UPDATE
     if (id) {
         query = query.update({ ...newCabin, image: imagePath }).eq("id", id);
     }
@@ -46,7 +46,7 @@ export const createEditCabin = async (newCabin, id) => {
         throw new Error("Cabin couldn't be created");
     }
 
-    // this if (!hasImagePath) added for editing cabin in case we are not changing an already uploaded image
+    // this if (!hasImagePath) added for updating cabin in case we are not changing an already uploaded image
     if (!hasImagePath) {
         // 2. Upload image
         // only if there was no error in creating the cabin above

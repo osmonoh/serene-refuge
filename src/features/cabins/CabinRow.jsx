@@ -6,7 +6,7 @@ import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
 import { formatCurrency } from "../../utils/helpers";
 import { useDeleteCabin } from "./useDeleteCabin";
 import { useCreateCabin } from "./useCreateCabin";
-import CreateCabinForm from "./CreateCabinForm";
+import CreateUpdateCabinForm from "./CreateUpdateCabinForm";
 
 const TableRow = styled.div`
     display: grid;
@@ -103,7 +103,8 @@ const CabinRow = ({ cabin }) => {
                     </button>
                 </div>
             </TableRow>
-            {showForm && <CreateCabinForm cabinToEdit={cabin} />}
+
+            {showForm && <CreateUpdateCabinForm cabinToUpdate={cabin} />}
         </>
     );
 };
