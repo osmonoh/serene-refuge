@@ -9,7 +9,7 @@ import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
 
 // this form is used for creating and also updating cabin
-const CreateUpdateCabinForm = ({ cabinToUpdate = {} }) => {
+const CreateUpdateCabinForm = ({ cabinToUpdate = {}, onCloseModal }) => {
     const { id: updateId, ...updateValues } = cabinToUpdate;
     const isUpdateSession = Boolean(updateId);
 
@@ -36,6 +36,7 @@ const CreateUpdateCabinForm = ({ cabinToUpdate = {} }) => {
                     onSuccess: (dataFromMutationFn) => {
                         console.log(dataFromMutationFn);
                         reset();
+                        onCloseModal?.(); // in case we use this form outside of a modal this onCloseModal function would be undefined so we call it here conditionally only if it exists
                     }
                 } // we can use an options object as a second argument (we also get access to the data returned from mutationFn - createUpdateCabin - here just console log for illustration) - here onSuccess we call reset() to clear the form (as now we cannot directly use it in useMutation since we moved it to the custom hook useUpdateCabin)
             );
@@ -46,6 +47,7 @@ const CreateUpdateCabinForm = ({ cabinToUpdate = {} }) => {
                     onSuccess: (dataFromMutationFn) => {
                         console.log(dataFromMutationFn);
                         reset();
+                        onCloseModal?.(); // in case we use this form outside of a modal this onCloseModal function would be undefined so we call it here conditionally only if it exists
                     }
                 } // we can use an options object as a second argument (we also get access to the data returned from mutationFn - createUpdateCabin - here just console log for illustration) - here onSuccess we call reset() to clear the form (as now we cannot directly use it in useMutation since we moved it to the custom hook useCreateCabin)
             );
@@ -59,7 +61,10 @@ const CreateUpdateCabinForm = ({ cabinToUpdate = {} }) => {
     };
 
     return (
-        <Form onSubmit={handleSubmit(onSubmit, onError)}>
+        <Form
+            onSubmit={handleSubmit(onSubmit, onError)}
+            type={onCloseModal ? "modal" : "regular"}
+        >
             <FormRow label="Cabin name" error={errors?.name?.message}>
                 <Input
                     type="text"
@@ -152,7 +157,11 @@ const CreateUpdateCabinForm = ({ cabinToUpdate = {} }) => {
 
             <FormRow>
                 {/* here type is an HTML attribute! => reset */}
-                <Button variation="secondary" type="reset">
+                <Button
+                    variation="secondary"
+                    type="reset"
+                    onClick={() => onCloseModal?.()} // in case we use this form outside of a modal this onCloseModal function would be undefined so we call it here conditionally only if it exists
+                >
                     Cancel
                 </Button>
                 <Button disabled={isWorking}>

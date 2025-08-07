@@ -1,11 +1,11 @@
-import { useState } from "react";
-import styled from "styled-components";
-
+import styled, { keyframes } from "styled-components";
 import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
 
 import { formatCurrency } from "../../utils/helpers";
 import { useDeleteCabin } from "./useDeleteCabin";
 import { useCreateCabin } from "./useCreateCabin";
+import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
 import CreateUpdateCabinForm from "./CreateUpdateCabinForm";
 
 const TableRow = styled.div`
@@ -47,6 +47,40 @@ const Discount = styled.div`
     color: var(--color-green-700);
 `;
 
+const visibilityDelay = keyframes`
+    to {
+        opacity: 1;
+        visibility: visible;
+
+    }
+`;
+
+const TooltipText = styled.div`
+    visibility: hidden;
+    opacity: 0;
+    border-radius: 4px;
+    padding: 2px 6px;
+    background-color: var(--color-grey-700);
+    color: var(--color-grey-50);
+    font-size: 1.2rem;
+
+    position: absolute;
+    top: -120%;
+    left: -50%;
+    z-index: 1;
+`;
+
+const Tooltip = styled.div`
+    position: relative;
+    display: inline-block;
+
+    &:hover {
+        ${TooltipText} {
+            animation: ${visibilityDelay} 300ms linear 300ms forwards;
+        }
+    }
+`;
+
 const CabinRow = ({ cabin }) => {
     const {
         id: cabinId,
@@ -58,7 +92,6 @@ const CabinRow = ({ cabin }) => {
         image
     } = cabin;
 
-    const [showForm, setShowForm] = useState(false);
     const { isPending: isDeleting, mutate: deleteCabin } = useDeleteCabin();
     const { isPending: isCreating, mutate: createCabin } = useCreateCabin();
 
@@ -90,21 +123,44 @@ const CabinRow = ({ cabin }) => {
                     <span>&mdash;</span>
                 )}
                 <div>
-                    <button onClick={handleDuplicate} disabled={isCreating}>
-                        <HiSquare2Stack />
-                    </button>
-                    <button
-                        onClick={() => setShowForm((showForm) => !showForm)}
-                    >
-                        <HiPencil />
-                    </button>
-                    <button onClick={handleDelete} disabled={isDeleting}>
-                        <HiTrash />
-                    </button>
+                    <Tooltip>
+                        <button onClick={handleDuplicate} disabled={isCreating}>
+                            <HiSquare2Stack />
+                        </button>
+                        <TooltipText>Duplicate</TooltipText>
+                    </Tooltip>
+
+                    <Modal>
+                        <Modal.Open opens="edit">
+                            <Tooltip>
+                                <button>
+                                    <HiPencil />
+                                </button>
+                                <TooltipText>Update</TooltipText>
+                            </Tooltip>
+                        </Modal.Open>
+                        <Modal.Window name="edit">
+                            <CreateUpdateCabinForm cabinToUpdate={cabin} />
+                        </Modal.Window>
+
+                        <Modal.Open opens="delete">
+                            <Tooltip>
+                                <button>
+                                    <HiTrash />
+                                </button>
+                                <TooltipText>Delete</TooltipText>
+                            </Tooltip>
+                        </Modal.Open>
+                        <Modal.Window name="delete">
+                            <ConfirmDelete
+                                resourceName="cabins"
+                                disabled={isDeleting}
+                                onConfirm={handleDelete}
+                            />
+                        </Modal.Window>
+                    </Modal>
                 </div>
             </TableRow>
-
-            {showForm && <CreateUpdateCabinForm cabinToUpdate={cabin} />}
         </>
     );
 };
