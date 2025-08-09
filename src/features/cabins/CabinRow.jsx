@@ -6,19 +6,9 @@ import { useDeleteCabin } from "./useDeleteCabin";
 import { useCreateCabin } from "./useCreateCabin";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
+import Table from "../../ui/Table";
 import CreateUpdateCabinForm from "./CreateUpdateCabinForm";
-
-const TableRow = styled.div`
-    display: grid;
-    grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
-    column-gap: 2.4rem;
-    align-items: center;
-    padding: 1.4rem 2.4rem;
-
-    &:not(:last-child) {
-        border-bottom: 1px solid var(--color-grey-100);
-    }
-`;
+import Menus from "../../ui/Menus";
 
 const Img = styled.img`
     display: block;
@@ -45,40 +35,6 @@ const Discount = styled.div`
     font-family: "Sono";
     font-weight: 500;
     color: var(--color-green-700);
-`;
-
-const visibilityDelay = keyframes`
-    to {
-        opacity: 1;
-        visibility: visible;
-
-    }
-`;
-
-const TooltipText = styled.div`
-    visibility: hidden;
-    opacity: 0;
-    border-radius: 4px;
-    padding: 2px 6px;
-    background-color: var(--color-grey-700);
-    color: var(--color-grey-50);
-    font-size: 1.2rem;
-
-    position: absolute;
-    top: -120%;
-    left: -50%;
-    z-index: 1;
-`;
-
-const Tooltip = styled.div`
-    position: relative;
-    display: inline-block;
-
-    &:hover {
-        ${TooltipText} {
-            animation: ${visibilityDelay} 300ms linear 300ms forwards;
-        }
-    }
 `;
 
 const CabinRow = ({ cabin }) => {
@@ -112,7 +68,7 @@ const CabinRow = ({ cabin }) => {
 
     return (
         <>
-            <TableRow role="row">
+            <Table.Row role="row">
                 <Img src={image} />
                 <Cabin>{name}</Cabin>
                 <div>Fits up to {maxCapacity} guests</div>
@@ -123,44 +79,45 @@ const CabinRow = ({ cabin }) => {
                     <span>&mdash;</span>
                 )}
                 <div>
-                    <Tooltip>
-                        <button onClick={handleDuplicate} disabled={isCreating}>
-                            <HiSquare2Stack />
-                        </button>
-                        <TooltipText>Duplicate</TooltipText>
-                    </Tooltip>
-
                     <Modal>
-                        <Modal.Open opens="edit">
-                            <Tooltip>
-                                <button>
-                                    <HiPencil />
-                                </button>
-                                <TooltipText>Update</TooltipText>
-                            </Tooltip>
-                        </Modal.Open>
-                        <Modal.Window name="edit">
-                            <CreateUpdateCabinForm cabinToUpdate={cabin} />
-                        </Modal.Window>
+                        <Menus.Menu>
+                            <Menus.Toggle id={cabin.id} />
 
-                        <Modal.Open opens="delete">
-                            <Tooltip>
-                                <button>
-                                    <HiTrash />
-                                </button>
-                                <TooltipText>Delete</TooltipText>
-                            </Tooltip>
-                        </Modal.Open>
-                        <Modal.Window name="delete">
-                            <ConfirmDelete
-                                resourceName="cabins"
-                                disabled={isDeleting}
-                                onConfirm={handleDelete}
-                            />
-                        </Modal.Window>
+                            <Menus.List id={cabin.id}>
+                                <Menus.Button
+                                    icon={<HiSquare2Stack />}
+                                    onClick={handleDuplicate}
+                                >
+                                    Duplicate
+                                </Menus.Button>
+
+                                <Modal.Open opens="edit">
+                                    <Menus.Button icon={<HiPencil />}>
+                                        Edit
+                                    </Menus.Button>
+                                </Modal.Open>
+
+                                <Modal.Open opens="delete">
+                                    <Menus.Button icon={<HiTrash />}>
+                                        Delete
+                                    </Menus.Button>
+                                </Modal.Open>
+                            </Menus.List>
+
+                            <Modal.Window name="edit">
+                                <CreateUpdateCabinForm cabinToUpdate={cabin} />
+                            </Modal.Window>
+
+                            <Modal.Window name="delete">
+                                <ConfirmDelete
+                                    resourceName="cabins"
+                                    onConfirm={handleDelete}
+                                />
+                            </Modal.Window>
+                        </Menus.Menu>
                     </Modal>
                 </div>
-            </TableRow>
+            </Table.Row>
         </>
     );
 };
