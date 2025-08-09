@@ -1,12 +1,12 @@
 import { useForm } from "react-hook-form";
 import { useCreateCabin } from "./useCreateCabin";
 import { useUpdateCabin } from "./useUpdateCabin";
-import Input from "../../ui/Input";
-import Form from "../../ui/Form";
-import Button from "../../ui/Button";
-import FileInput from "../../ui/FileInput";
-import Textarea from "../../ui/Textarea";
-import FormRow from "../../ui/FormRow";
+import Input from "../../ui/form/Input";
+import Form from "../../ui/form/Form";
+import Button from "../../ui/interactive/Button";
+import FileInput from "../../ui/form/FileInput";
+import Textarea from "../../ui/form/Textarea";
+import FormRow from "../../ui/form/FormRow";
 
 // this form is used for creating and also updating cabin
 const CreateUpdateCabinForm = ({ cabinToUpdate = {}, onCloseModal }) => {

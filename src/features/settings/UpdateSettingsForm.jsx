@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
 import { useSettings } from "./useSettings";
 import { useUpdateSetting } from "./useUpdateSetting";
-import Form from "../../ui/Form";
-import FormRow from "../../ui/FormRow";
-import Input from "../../ui/Input";
-import Spinner from "../../ui/Spinner";
+import Form from "../../ui/form/Form";
+import FormRow from "../../ui/form/FormRow";
+import Input from "../../ui/form/Input";
+import Spinner from "../../ui/layout/Spinner";
 
 const UpdateSettingsForm = () => {
     const { isLoading, error, settings } = useSettings();

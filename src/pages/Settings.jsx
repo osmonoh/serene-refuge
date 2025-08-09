@@ -1,5 +1,5 @@
-import Row from "../ui/Row";
-import Heading from "../ui/Heading";
+import Row from "../ui/layout/Row";
+import Heading from "../ui/layout/Heading";
 import UpdateSettingsForm from "../features/settings/UpdateSettingsForm";
 
 const Settings = () => {

@@ -1,6 +1,6 @@
 import CreateUpdateCabinForm from "./CreateUpdateCabinForm";
-import Modal from "../../ui/Modal";
-import Button from "../../ui/Button";
+import Modal from "../../ui/layout/Modal";
+import Button from "../../ui/interactive/Button";
 
 const AddCabin = () => {
     return (

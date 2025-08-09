@@ -1,8 +1,8 @@
 import { useCabin } from "./useCabin";
-import Spinner from "../../ui/Spinner";
-import Table from "../../ui/Table";
-import Menus from "../../ui/Menus";
-import Empty from "../../ui/Empty";
+import Spinner from "../../ui/layout/Spinner";
+import Table from "../../ui/layout/Table";
+import Menus from "../../ui/interactive/Menus";
+import Empty from "../../ui/layout/Empty";
 import CabinRow from "./CabinRow";
 
 const CabinTable = () => {
