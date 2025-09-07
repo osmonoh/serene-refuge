@@ -42,6 +42,10 @@ const Filter = ({ filterField, options }) => {
     const handleClick = (value) => {
         searchParams.set(filterField, value);
 
+        if (searchParams.get("page")) {
+            searchParams.set("page", 1);
+        }
+
         setSearchParams(searchParams);
     };
 
@@ -50,7 +54,7 @@ const Filter = ({ filterField, options }) => {
             {options.map((option) => (
                 <FilterButton
                     key={option.value}
-                    active={+(currentValue === option.value)}
+                    active={+(currentValue === option.value)} // there was this weird warning related to styled components () - there is an official solution on styeled components website but this is a more simple and elegant solution: The trick is to use the unary plus operator to convert boolean to number (Fixing this error is very simple. You just need to add + before your booleans values. According to MDN unary operator is the preferred way for number conversion)
                     disabled={currentValue === option.value}
                     onClick={() => handleClick(option.value)}
                 >

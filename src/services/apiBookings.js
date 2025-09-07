@@ -37,3 +37,47 @@ export const getBookings = async ({ filter, sortBy, page }) => {
 
     return { data, count };
 };
+
+export const getBooking = async (id) => {
+    const { data, error } = await supabase
+        .from("bookings")
+        .select("*, cabins(*), guests(*)")
+        .eq("id", id)
+        .single();
+
+    if (error) {
+        console.error(error);
+        throw new Error("Booking not found");
+    }
+
+    return data;
+};
+
+export const updateBooking = async (id, obj) => {
+    const { data, error } = await supabase
+        .from("bookings")
+        .update(obj)
+        .eq("id", id)
+        .select()
+        .single();
+
+    if (error) {
+        console.error(error);
+        throw new Error("Booking could not be updated");
+    }
+    return data;
+};
+
+export const deleteBooking = async (id) => {
+    // REMEMBER RLS POLICIES
+    const { data, error } = await supabase
+        .from("bookings")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        console.error(error);
+        throw new Error("Booking could not be deleted");
+    }
+    return data;
+};
