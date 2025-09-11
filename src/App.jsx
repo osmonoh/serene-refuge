@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 
 import AppLayout from "./ui/layout/AppLayout";
+import ProtectedRoute from "./ui/layout/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Bookings from "./pages/Bookings";
 import Booking from "./pages/Booking";
@@ -54,7 +55,13 @@ const App = () => {
 
             <BrowserRouter>
                 <Routes>
-                    <Route element={<AppLayout />}>
+                    <Route
+                        element={
+                            <ProtectedRoute>
+                                <AppLayout />
+                            </ProtectedRoute>
+                        }
+                    >
                         <Route
                             index
                             element={<Navigate replace to="dashboard" />}

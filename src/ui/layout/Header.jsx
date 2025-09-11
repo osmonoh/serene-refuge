@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Lougout from "../../features/authentication/Lougout";
 
 const StyledHeader = styled.header`
     border-bottom: 1px solid var(--color-grey-100);
@@ -7,7 +8,11 @@ const StyledHeader = styled.header`
 `;
 
 const Header = () => {
-    return <StyledHeader>HEADER</StyledHeader>;
+    return (
+        <StyledHeader>
+            <Lougout />
+        </StyledHeader>
+    );
 };
 
 export default Header;
