@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useDarkMode } from "../../context/DarkModeContext";
 
 const StyledLogo = styled.div`
     text-align: center;
@@ -17,7 +18,7 @@ const Img = styled.img`
 `;
 
 const Text = styled.p`
-    color: #476044;
+    color: ${(props) => (props.darkMode ? "#f3faf3" : "#476044")};
     font-size: 1.4rem;
     /* font-family: Sono; */
     letter-spacing: 2px;
@@ -26,11 +27,14 @@ const Text = styled.p`
 `;
 
 const Logo = () => {
+    const { isDarkMode } = useDarkMode();
+    // const src = isDarkMode ? "/logo-dark.png" : "/logo-light.png";
+
     return (
         <StyledLogo>
-            {/* <Img src="/logo-light.png" alt="Logo" /> */}
+            {/* <Img src={src} alt="Logo" /> */}
             <Img src="/logo-light_no-text.png" alt="Logo" />
-            <Text>Serene refuge</Text>
+            <Text darkMode={isDarkMode}>Serene refuge</Text>
         </StyledLogo>
     );
 };
