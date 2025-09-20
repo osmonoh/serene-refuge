@@ -25,7 +25,6 @@ const UpdateUserDataForm = () => {
         e.preventDefault();
 
         if (!fullName) return;
-        console.log(avatar);
         updateUser(
             { fullName, avatar },
             {

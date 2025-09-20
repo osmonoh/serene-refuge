@@ -16,7 +16,6 @@ export const useBookings = () => {
 
     // SORT
     const sortValue = searchParams.get("sort") || "startDate-asc";
-    console.log(sortValue);
     const [field, direction] = sortValue.split("-");
     const sortBy = { field, direction };
 
